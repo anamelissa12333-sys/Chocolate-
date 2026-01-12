@@ -24,6 +24,8 @@
       --border: #e5e0da;
       --logo-height: 64px;
       --focus-ring: rgba(212,168,75,0.25);
+      --whatsapp-green: #25D366;
+      --whatsapp-dark: #128C7E;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -104,6 +106,34 @@
       box-shadow: 0 10px 30px rgba(196,160,80,0.14);
     }
 
+    /* WhatsApp styled button */
+    #sendWhatsapp {
+      --pad-x: 1.1rem;
+      --pad-y: 0.75rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: var(--pad-y) var(--pad-x);
+      border-radius: 999px;
+      color: white;
+      background: linear-gradient(180deg, var(--whatsapp-green), var(--whatsapp-dark));
+      border: 1px solid rgba(0,0,0,0.08);
+      box-shadow: 0 8px 28px rgba(18,140,126,0.12);
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
+      text-decoration: none;
+    }
+    #sendWhatsapp:hover { transform: translateY(-3px); filter:brightness(.98); box-shadow: 0 14px 40px rgba(18,140,126,0.14); }
+    #sendWhatsapp:focus { outline: 3px solid rgba(37,211,102,0.18); outline-offset: 3px; }
+
+    #sendWhatsapp::before {
+      content: "📲";
+      display:inline-block;
+      font-size:1.05rem;
+      margin-left: -0.15rem;
+    }
+
     /* Hero */
     .hero { position:relative; min-height:70vh; display:flex; align-items:center; justify-content:center; overflow:hidden; padding-top:5.5rem; }
     .hero-bg { position:absolute; inset:0; }
@@ -143,9 +173,18 @@
 
     .menu-card { position:relative; background:var(--card); border-radius:1rem; overflow:hidden; box-shadow:0 8px 30px rgba(74,44,42,0.1); transition:box-shadow .5s; cursor:pointer; }
     .menu-card:hover { box-shadow:0 12px 40px rgba(166,38,57,0.2); }
-    .menu-card-image { height:16rem; overflow:hidden; }
-    .menu-card-image img { width:100%; height:100%; object-fit:cover; object-position:50% 20%; transition:transform .7s; display:block; }
-    .menu-card:hover .menu-card-image img { transform:scale(1.05); }
+    .menu-card-image {
+      height:16rem;
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: linear-gradient(180deg, rgba(250,248,247,0.8), var(--secondary));
+      padding: 0.6rem; /* small padding so contained image breathes */
+    }
+    /* make the copo appear fully: use contain and center */
+    .menu-card-image img { max-width:100%; max-height:100%; object-fit:contain; object-position:center; transition:transform .7s, filter .25s; display:block; border-radius:8px; }
+    .menu-card:hover .menu-card-image img { transform: scale(1.02); filter:brightness(1.03); }
     .menu-card-content { padding:1.5rem; }
     .menu-card-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:.5rem; }
     .menu-card-title { font-size:1.25rem; font-weight:600; }
@@ -328,7 +367,7 @@
       <div class="menu-grid">
         <div class="menu-card" data-product-id="copo-chocoberry" data-product-name="Copo Chocoberry" data-product-price="18.00" tabindex="0" role="button" aria-pressed="false">
           <div class="menu-card-image">
-            <img src="https://i.imgur.com/ezNye5D.jpeg" alt="Copo Chocoberry — morango com chocolate">
+            <img src="https://i.imgur.com/EYt5DmV.png" alt="Copo Chocoberry — morango com chocolate">
           </div>
           <div class="menu-card-content">
             <div class="menu-card-header">
@@ -341,7 +380,7 @@
 
         <div class="menu-card" aria-hidden="true" style="opacity:0.98;">
           <div class="menu-card-image">
-            <img src="https://i.imgur.com/p7eclye.png" alt="Destaque Chocoberry">
+            <img src="https://i.imgur.com/jV4HJNf.png" alt="Destaque Chocoberry">
           </div>
           <div class="menu-card-content">
             <div class="menu-card-header">
@@ -489,12 +528,12 @@
       </div>
 
       <div class="contact-grid">
-        <a href="https://wa.me/5521997305179" target="_blank" class="contact-card" rel="noopener">
+        <a href="https://wa.me/5521997305179" target="_blank" class="contact-card" rel="noopener noreferrer">
           <span class="contact-icon">📱</span>
           <h3 class="contact-title">WhatsApp</h3>
           <p class="contact-info">(21) 99730-5179</p>
         </a>
-        <a href="https://instagram.com/chocoberry" target="_blank" class="contact-card" rel="noopener">
+        <a href="https://instagram.com/chocoberry" target="_blank" class="contact-card" rel="noopener noreferrer">
           <span class="contact-icon">📸</span>
           <h3 class="contact-title">Instagram</h3>
           <p class="contact-info">@chocoberry</p>
@@ -608,7 +647,7 @@
 
           <div style="display:flex;gap:.5rem;justify-content:flex-end;margin-top:.75rem;">
             <button id="backToStep2" class="btn btn-outline">← Voltar</button>
-            <button id="sendWhatsapp" class="btn btn-primary">Enviar via WhatsApp</button>
+            <button id="sendWhatsapp" class="btn btn-primary" aria-label="Enviar pedido via WhatsApp">Enviar via WhatsApp</button>
           </div>
         </div>
       </div>
@@ -618,7 +657,10 @@
   <!-- Small script to handle modal/order logic and WhatsApp link -->
   <script>
     // dynamic year
-    document.getElementById('currentYear').textContent = new Date().getFullYear();
+    (function(){
+      const yEl = document.getElementById('currentYear');
+      if (yEl) yEl.textContent = new Date().getFullYear();
+    })();
 
     // keep base price consistent
     (function(){
@@ -627,12 +669,12 @@
     })();
 
     (function(){
-      // elements
+      // elements (guarded)
       const openOrderBtn = document.getElementById('openOrderBtn');
       const headerOrderBtn = document.getElementById('headerOrderBtn');
       const menuProductCard = document.querySelector('.menu-card[data-product-id="copo-chocoberry"]');
       const backdrop = document.getElementById('orderBackdrop');
-      const modal = backdrop.querySelector('.order-modal');
+      const modal = backdrop ? backdrop.querySelector('.order-modal') : null;
       const closeBtn = document.getElementById('closeOrderModal');
 
       // steps
@@ -672,6 +714,7 @@
 
       // focus trap helper (simple)
       function trapFocus(container) {
+        if (!container) return () => {};
         const focusable = Array.from(container.querySelectorAll('a[href], button:not([disabled]), input, textarea, select, [tabindex]:not([tabindex="-1"])'))
           .filter(el => el.offsetParent !== null);
         if (!focusable.length) return () => {};
@@ -704,16 +747,18 @@
         document.body.style.overflow = 'hidden';
 
         setTimeout(() => {
+          if (!backdrop) return;
           backdrop.classList.add('open');
           backdrop.setAttribute('aria-hidden', 'false');
           showStep(1);
-          const first = modal.querySelector('input, button, textarea, [tabindex]') || modal;
+          const first = modal ? (modal.querySelector('input, button, textarea, [tabindex]') || modal) : null;
           if (first) first.focus();
-          removeFocusTrap = trapFocus(modal);
+          removeFocusTrap = trapFocus(modal || backdrop);
         }, 250);
       }
 
       function closeModal() {
+        if (!backdrop) return;
         backdrop.classList.remove('open');
         backdrop.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
@@ -722,21 +767,21 @@
       }
 
       function showStep(n) {
-        step1.style.display = (n === 1) ? 'block' : 'none';
-        step2.style.display = (n === 2) ? 'block' : 'none';
-        step3.style.display = (n === 3) ? 'block' : 'none';
+        if (step1) step1.style.display = (n === 1) ? 'block' : 'none';
+        if (step2) step2.style.display = (n === 2) ? 'block' : 'none';
+        if (step3) step3.style.display = (n === 3) ? 'block' : 'none';
         updateSummary();
       }
 
       function updateSummary() {
-        const qty = Math.max(1, parseInt(modalQty.value || '1', 10));
-        summaryQty.textContent = qty;
-        const checked = Array.from(modalAddonsList.querySelectorAll('input[type="checkbox"]:checked'));
+        const qty = Math.max(1, parseInt((modalQty && modalQty.value) || '1', 10));
+        if (summaryQty) summaryQty.textContent = qty;
+        const checked = modalAddonsList ? Array.from(modalAddonsList.querySelectorAll('input[type="checkbox"]:checked')) : [];
         const addonsNames = checked.map(i => i.value);
         const addonsTotal = checked.reduce((s, i) => s + parseFloat(i.getAttribute('data-price') || '0'), 0);
-        summaryAddons.textContent = addonsNames.length ? addonsNames.join(', ') : 'Nenhum';
+        if (summaryAddons) summaryAddons.textContent = addonsNames.length ? addonsNames.join(', ') : 'Nenhum';
         const total = (UNIT_PRICE * qty) + (addonsTotal * qty);
-        summaryTotal.textContent = formatBRL(total);
+        if (summaryTotal) summaryTotal.textContent = formatBRL(total);
       }
 
       // wire events
@@ -749,12 +794,12 @@
       }
 
       if (closeBtn) closeBtn.addEventListener('click', closeModal);
-      backdrop.addEventListener('click', function(e){ if (e.target === backdrop) closeModal(); });
+      if (backdrop) backdrop.addEventListener('click', function(e){ if (e.target === backdrop) closeModal(); });
 
       // qty
       if (incQty) incQty.addEventListener('click', function(){ modalQty.value = Math.max(1, parseInt(modalQty.value||'1') + 1); updateSummary(); });
       if (decQty) decQty.addEventListener('click', function(){ modalQty.value = Math.max(1, parseInt(modalQty.value||'1') - 1); updateSummary(); });
-      modalQty.addEventListener('change', function(){ if (parseInt(modalQty.value||'1') < 1) modalQty.value = 1; updateSummary(); });
+      if (modalQty) modalQty.addEventListener('change', function(){ if (parseInt(modalQty.value||'1') < 1) modalQty.value = 1; updateSummary(); });
 
       // steps
       if (toStep2) toStep2.addEventListener('click', function(){ showStep(2); });
@@ -763,40 +808,45 @@
       if (backToStep2) backToStep2.addEventListener('click', function(){ showStep(2); });
       if (cancelOrder1) cancelOrder1.addEventListener('click', function(){ closeModal(); });
 
-      if (clearAddons) clearAddons.addEventListener('click', function(){
+      if (clearAddons && modalAddonsList) clearAddons.addEventListener('click', function(){
         modalAddonsList.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
         updateSummary();
       });
 
-      modalAddonsList.addEventListener('change', updateSummary);
+      if (modalAddonsList) modalAddonsList.addEventListener('change', updateSummary);
 
-      // send to WhatsApp
-      sendWhatsapp.addEventListener('click', function(){
-        const qty = Math.max(1, parseInt(modalQty.value || '1', 10));
-        const checked = Array.from(modalAddonsList.querySelectorAll('input[type="checkbox"]:checked'));
+      // send to WhatsApp with emojis for clarity
+      if (sendWhatsapp) sendWhatsapp.addEventListener('click', function(){
+        const qty = Math.max(1, parseInt((modalQty && modalQty.value) || '1', 10));
+        const checked = modalAddonsList ? Array.from(modalAddonsList.querySelectorAll('input[type="checkbox"]:checked')) : [];
         const addons = checked.map(i => ({ name: i.value, price: parseFloat(i.getAttribute('data-price') || 0) }));
         const addonsText = addons.length ? addons.map(a => `${a.name} (${formatBRL(a.price)})`).join(', ') : 'Nenhum';
         const addonsTotal = addons.reduce((s, a) => s + a.price, 0);
         const total = (UNIT_PRICE * qty) + (addonsTotal * qty);
-        const name = (custName.value || '').trim();
-        const notes = (custNotes.value || '').trim();
+        const name = (custName && custName.value || '').trim();
+        const notes = (custNotes && custNotes.value || '').trim();
 
-        let msg = 'Pedido Chocoberry%0A';
-        msg += 'Produto: Copo Chocoberry%0A';
-        msg += 'Valor unitário: ' + encodeURIComponent(formatBRL(UNIT_PRICE)) + '%0A';
-        msg += 'Quantidade: ' + qty + '%0A';
-        msg += 'Adicionais: ' + encodeURIComponent(addonsText) + '%0A';
-        msg += 'Total: ' + encodeURIComponent(formatBRL(total)) + '%0A';
-        msg += 'Retirada: retirada no local (loja)%0A';
-        if (name) msg += 'Nome: ' + encodeURIComponent(name) + '%0A';
-        if (notes) msg += 'Observações: ' + encodeURIComponent(notes) + '%0A';
+        // build plain message with emojis, then encode once
+        let msg = '';
+        msg += '🧾 *Pedido Chocoberry*' + '\n';
+        msg += '🍽️ Produto: Copo Chocoberry' + '\n';
+        msg += '💰 Valor unitário: ' + formatBRL(UNIT_PRICE) + '\n';
+        msg += '🔢 Quantidade: ' + qty + '\n';
+        msg += '➕ Adicionais: ' + addonsText + '\n';
+        msg += '💵 Total: ' + formatBRL(total) + '\n';
+        msg += '📍 Retirada: Retirada no local (loja)' + '\n';
+        if (name) msg += '👤 Nome: ' + name + '\n';
+        if (notes) msg += '📝 Observações: ' + notes + '\n';
+        msg += '\n' + '⌛ Aguardo confirmação, por favor.';
 
-        const url = 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + msg;
-        window.open(url, '_blank');
+        const url = 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(msg);
+        // open new tab/window (no referrer relationship)
+        const win = window.open(url, '_blank');
+        if (win) win.opener = null;
       });
 
       // close modal with Escape
-      document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && backdrop.classList.contains('open')) closeModal(); });
+      document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && backdrop && backdrop.classList.contains('open')) closeModal(); });
 
       // initial totals
       updateSummary();
